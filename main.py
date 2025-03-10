@@ -38,19 +38,19 @@ def sign_data(request: SignRequest):
             raise ValueError("Invalid SHA-256 hash format.")
 
         # Convert hash hex to bytes
-        hash_bytes = bytes.fromhex(request.hash)
+        hash_bytes = bytes.fromhex(request.hash.lower())
 
         # Load the private key
         private_key = load_private_key()
 
         # Sign the hash
         signature = private_key.sign(
-            hash_bytes.lower(),
+            hash_bytes,
             padding.PKCS1v15(),
             hashes.SHA256()
         )
 
         # Return the base64-encoded signature
-        return {"hash": hash_bytes.lower(), "signature": base64.b64encode(signature).decode()}
+        return {"hash": request.hash.lower(), "signature": base64.b64encode(signature).decode()}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
