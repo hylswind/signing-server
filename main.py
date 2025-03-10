@@ -30,7 +30,7 @@ def load_private_key():
     return private_key
 
 
-@app.post("/signing")
+@app.post("/sign")
 def sign_data(request: SignRequest):
     try:
         # Validate input hash
