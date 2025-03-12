@@ -4,7 +4,7 @@ import base64
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from cryptography.hazmat.primitives.asymmetric import padding, rsa
+from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization, hashes
 
 # Define the API server
@@ -12,7 +12,6 @@ app = FastAPI()
 
 # Path to the private key
 PRIVATE_KEY_PATH = "/mnt/keystore/private_key.pem"
-PUBLIC_KEY_PATH = "/mnt/keystore/public_key.pem"
 PROOF_FILE_PATH = "/mnt/keystore/proof.json"
 
 
@@ -27,19 +26,9 @@ def load_private_key():
     with open(PRIVATE_KEY_PATH, "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),
-            password=None  # Adjust if the key is password-protected
+            password=None
         )
     return private_key
-
-
-def load_public_key():
-    if not os.path.exists(PUBLIC_KEY_PATH):
-        raise FileNotFoundError("Public key file not found.")
-
-    with open(PUBLIC_KEY_PATH, "rb") as key_file:
-        public_key = key_file.read()
-
-    return public_key
 
 
 def load_proof_data():
@@ -68,9 +57,6 @@ def sign_data(request: SignRequest):
         # Load the private key
         private_key = load_private_key()
 
-        # Load the public key
-        public_key = load_public_key()
-
         # Load proof data
         proof_data = load_proof_data()
 
@@ -85,7 +71,6 @@ def sign_data(request: SignRequest):
         return {
             "hash": request.hash,
             "signature": base64.b64encode(signature).decode(),
-            "pubKey": public_key,
             "launchProof": proof_data
         }
     except Exception as e:
