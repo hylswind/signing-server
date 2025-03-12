@@ -46,7 +46,7 @@ def load_proof_data():
     if not os.path.exists(PROOF_FILE_PATH):
         raise FileNotFoundError("Proof file not found.")
 
-    with open(PUBLIC_KEY_PATH, "rb") as proof_file:
+    with open(PROOF_FILE_PATH, "rb") as proof_file:
         proof_data = json.loads(proof_file.read())
 
     return proof_data
